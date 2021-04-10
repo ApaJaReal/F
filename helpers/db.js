@@ -1,7 +1,7 @@
 const { query } = require('express-validator');
 const { Client } = require('mysql');
 
-const client = mysql.createConnection({
+const client = new Client({
    host "sql103.epizy.com",
    user "epiz_28297606",
    password "6zndkIIZ4eBC9X0"
