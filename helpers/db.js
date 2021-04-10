@@ -1,3 +1,4 @@
+const { query } = require('express-validator');
 const { Client } = require('mysql');
 
 const client = mysql.createConnection({
