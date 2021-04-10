@@ -4,7 +4,6 @@ const { body, validationResult } = require('express-validator');
 const socketIO = require('socket.io');
 const qrcode = require('qrcode');
 const http = require('http');
-const fs = require('fs');
 const { phoneNumberFormatter } = require('./helpers/formatter');
 const fileUpload = require('express-fileupload');
 const axios = require('axios');
@@ -22,12 +21,114 @@ app.use(fileUpload({
   debug: true
 }));
 
-const SESSION_FILE_PATH = './whatsapp-session.json';
-let sessionCfg;
-if (fs.existsSync(SESSION_FILE_PATH)) {
-  sessionCfg = require(SESSION_FILE_PATH);
-}
+(async() => {
+  
+  })();
+app.get('/', (req, res) => {
+  res.sendFile('index.html', {
+    root: __dirname
+  });
+});
 
+const client = new Client({
+  restartOnAuthFail: true,
+  puppeteer: {
+    headless: true,
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-accelerated-2d-canvas',
+      '--no-first-run',
+      '--no-zygote',
+      '--single-process', // <- this one doesn't works in Windows
+      '--disable-gpu'
+    ],
+  },
+  session: sessionCfg
+});
+
+client.on('message', msg => {
+  if (msg.body == '!ping') {
+    msg.reply('pong');
+  } else if (msg.body == 'good morning') {
+    msg.reply('selamat pagi');
+  } else if (msg.body == '!groups') 
+    client.getChats().then(chats => {
+      const groups = chats.filter(chat => chat.isGroup);
+
+      if (groups.length == 0) {
+        msg.reply('You have no group yet.');
+      } else {
+        let replyMsg = '*YOUR GROUPS*\n\n';
+        groups.forEach((group, i) => {
+          replyMsg += `ID: ${group.id._serialized}\nName: ${group.name}\n\n`
+        });
+        replyMsg += '_You can use the group id to send a message to the group._'
+        msg.reply(replyMsg);
+      }
+    });
+  }
+});
+
+
+
+// Socket IO
+io.on('connection', function(socket) {
+  socket.emit('message', 'Connecting...');
+
+  client.on('qr', (qr) app.get('/', (req, res) => {
+  res.sendFile('index.html', {
+    root: __dirname
+  });
+});
+
+const client = new Client({
+  restartOnAuthFail: true,
+  puppeteer: {
+    headless: true,
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-accelerated-2d-canvas',
+      '--no-first-run',
+      '--no-zygote',
+      '--single-process', // <- this one doesn't works in Windows
+      '--disable-gpu'
+    ],
+  },
+  session: sessionCfg
+});
+
+client.on('message', msg => {
+  if (msg.body == '!ping') {
+    msg.reply('pong');
+  } else if (msg.body == 'good morning') {
+    msg.reply('selamat pagi');
+  } else if (msg.body == '!groups') {
+    client.getChats().then(chats => {
+      const groups = chats.filter(chat => chat.isGroup);
+
+      if (groups.length == 0) {
+        msg.reply('You have no group yet.');
+      } else {
+        let replyMsg = '*YOUR GROUPS*\n\n';
+        groups.forEach((group, i) => {
+          replyMsg += `ID: ${group.id._serialized}\nName: ${group.name}\n\n`;
+        });
+        replyMsg += '_You can use the group id to send a message to the group._'
+        msg.reply(replyMsg);
+      }
+    });
+  }
+});
+
+client.initialize();
+
+// Socket IO
+io.on('connection', function(socket) {
+  socket.emit('message', 'Connecting...');
 app.get('/', (req, res) => {
   res.sendFile('index.html', {
     root: __dirname
@@ -82,6 +183,13 @@ io.on('connection', function(socket) {
   socket.emit('message', 'Connecting...');
 
   client.on('qr', (qr) => {
+    console.log('QR RECEIVED', qr);
+    qrcode.toDataURL(qr, (err, url) => {
+      socket.emit
+  client.on('qr', (qr) => {
+    console.log('QR RECEIVED', qr);
+    qrcode.toDataURL(qr, (err, url) => {
+      socket.emit=> {
     console.log('QR RECEIVED', qr);
     qrcode.toDataURL(qr, (err, url) => {
       socket.emit('qr', url);
