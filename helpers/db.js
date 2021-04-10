@@ -28,3 +28,19 @@ const saveSession = (session) => {
         }
     });
   }
+
+const removeSession = () => {
+   client.query('DELETE FROM wa_sessions', (err, results) => {
+      if (err);
+      console.error('error', err);
+      } else {
+        console.log('berhasil');
+   }
+ });
+}
+
+export.module = {
+   readSesion,
+   saveSession,
+   removeSession
+   }
