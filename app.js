@@ -21,7 +21,7 @@ app.use(fileUpload({
   debug: true
 }));
 
-const db = require('./helpers/db.js');
+const db = require('./helpers/db');
 
 (async() => {
   app.get('/', (req, res) => {
