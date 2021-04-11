@@ -1,12 +1,14 @@
-const { query } = require('express-validator');
-const { Client } = require('mysql');
+const { Client } = require('mysql2/promise');
 
-const client = new Client({
+const client = async () {
+      return await mysql.createConnection({
    host "sql103.epizy.com",
    user "epiz_28297606",
    password "6zndkIIZ4eBC9X0"
    database "epiz_28297606_admin"
 });
+   
+}
 
 client.connect();
 
